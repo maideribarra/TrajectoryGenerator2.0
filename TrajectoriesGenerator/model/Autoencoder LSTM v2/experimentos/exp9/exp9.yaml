@@ -12,5 +12,5 @@ OUTPUT_DIM: 9
 TRAIN_DATASET: 'train40000.dat'
 TEST_DATASET: 'test40000.dat'
 VAL_DATASET: 'val40000.dat'
-LOG_DIR: 'TrajectoryGenerator_logs_exp9/'
+LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp9/'
 CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp9/LSTM/version_0/checkpoints/epoch=0-step=31413.ckpt'
