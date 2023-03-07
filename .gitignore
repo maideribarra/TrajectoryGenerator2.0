@@ -1,0 +1,10 @@
+*ficheros
+*.csv
+*.dat
+*.txt
+*events*
+*.ckpt
+*esultado
+*hparams*
+__pycache__
+.vscode
