@@ -1,0 +1,18 @@
+#Fecha: 2023/03/08
+#Experimento con one encoded vector para las acciones.
+BATCH_SIZE: 1
+DEC_DROPOUT: 0.3
+DROPOUT_PROB: 0.3
+ENC_DROPOUT: 0.3
+HID_DIM: 1000
+INPUT_DIM: 9
+LEARNING_RATE: 2.0e-05
+NUM_EPOCHS: 1
+NUM_SEQ: 260
+N_LAYERS: 1
+OUTPUT_DIM: 9
+TRAIN_DATASET: 'train40000v2.dat'
+TEST_DATASET: 'test40000v2.dat'
+VAL_DATASET: 'val40000v2.dat'
+LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp10/'
+CHK_PATH: 

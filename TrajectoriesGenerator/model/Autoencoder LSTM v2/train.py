@@ -19,8 +19,9 @@ if __name__ == "__main__":
     # First initialize our model.
     #Experimento para probar dataset de 40000, hidden layer=1000
     cwd = os.getcwd()
-    dir="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/exp9/"
-    with open(dir+"exp9.yaml", "rb") as f:
+    experimento=sys.argv[1]
+    dir="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/"+experimento+'/'
+    with open(dir+experimento+".yaml", "rb") as f:
         datos = yaml.load(f, yaml.Loader)
         NUM_SEQ = datos['NUM_SEQ']
         INPUT_DIM = datos['INPUT_DIM']
