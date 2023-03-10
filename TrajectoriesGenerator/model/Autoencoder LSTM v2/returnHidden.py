@@ -41,9 +41,10 @@ if __name__ == "__main__":
         TEST_DATASET = datos['TEST_DATASET']
         LOG_DIR = datos['LOG_DIR']
         CHK_PATH =datos['CHK_PATH']
+        LOSS_FUNCTION =datos['LOSS_FUNCTION']
     print(LEARNING_RATE)
     device =torch.device('cuda')
-    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)       
+    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,LOSS_FUNCTION)       
     workdir = cwd+'/../../data/ficheros/'
     data = DataModule(workdir + TRAIN_DATASET,
                     workdir + VAL_DATASET,
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     logger = TensorBoardLogger(logdir, name="LSTM")
     num_gpus = 1 if torch.cuda.is_available() else 0
     chk_path = CHK_PATH
-    model2 = model.load_from_checkpoint(chk_path,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE)
+    model2 = model.load_from_checkpoint(chk_path,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE, lossFunction=LOSS_FUNCTION)
     checkpoint = torch.load(chk_path, map_location=lambda storage, loc: storage)
     print(checkpoint)
     trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
@@ -73,25 +74,34 @@ if __name__ == "__main__":
     print('HiddenVec size 2',len(hiddVect2[0][0]))
     print('HiddenVec size 3',len(hiddVect2[0][0][0]))
     print(type(hiddVect2[0]))
-    hiddVect = [np.mean(x, axis=1, dtype=torch.dtype) for x in hiddVect2]
+    print('cuidado preparado para batch 1')
+    hiddVect = [np.mean(x, axis=1, dtype=torch.dtype)[0] for x in hiddVect2]
+    hiddCell = [np.mean(x, axis=1, dtype=torch.dtype)[0] for x in hiddCell2]
     #print(hiddVect.shape)    
     print('hiddVect size 0',len(hiddVect))
     print('hiddVect size 1',len(hiddVect[0]))
-    print('hiddVect size 2',len(hiddVect[0][0]))
-    #nphiddVect =np.asarray(hiddVect)
+    #print('hiddVect size 2',len(hiddVect[0][0]))
+    nphiddVect =np.asarray(hiddVect)
+    nphiddCell =np.asarray(hiddCell)
     #print('nphiddVect.shape',nphiddVect.shape) #(num_batches,hid_dim)
     #print(nphiddVect)
-    for batch in hiddVect:
-        for traj in batch:
+    #for batch in hiddVect:
+     #   for traj in batch:
             #print(traj.shape)
             #vecDib=traj[::10]
             #plt.plot(vecDib)
-            plt.plot(traj)
-    plt.show()        
-    file = io.BytesIO()
-    fileName = dir+'\resultado'
-    serialized = pickle.dump(HiddenVect, file)
-    with open(fileName, "wb") as f:
-        f.write(file.getbuffer())
-       
+      #      plt.plot(traj)
+    #plt.show()        
+    #file = io.BytesIO()
+    #fileName = dir+'resultadoHidden'+'exp9'
+    #serialized = pickle.dump(hiddVect, file)
+    #with open(fileName, "wb") as f:
+     #   f.write(file.getbuffer())
+    #file = io.BytesIO()
+    #fileName = dir+'resultadoCell'+'exp9'
+    #serialized = pickle.dump(hiddCell, file)
+    #with open(fileName, "wb") as f:
+     #   f.write(file.getbuffer())
+    np.savetxt('hiddenVecExp9.txt', nphiddVect, delimiter=',') 
+    np.savetxt('cellVecExp9.txt', nphiddCell, delimiter=',') 
     

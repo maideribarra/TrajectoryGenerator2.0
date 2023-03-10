@@ -1,0 +1,19 @@
+#Fecha: 2023/03/09
+#Experimento con one encoded vector para las acciones, 12 dimensiones en vez de 9, datos normalizados por columnas
+#Resultado: Overfitting
+BATCH_SIZE: 1
+DEC_DROPOUT: 0.3
+DROPOUT_PROB: 0.3
+ENC_DROPOUT: 0.3
+HID_DIM: 1000
+INPUT_DIM: 12
+LEARNING_RATE: 2.0e-05
+NUM_EPOCHS: 1
+NUM_SEQ: 260
+N_LAYERS: 1
+OUTPUT_DIM: 12
+TRAIN_DATASET: 'train40000v2.dat'
+TEST_DATASET: 'test40000v2.dat'
+VAL_DATASET: 'val40000v2.dat'
+LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp11/'
+CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp11/LSTM/version_1/checkpoints/epoch=0-step=31413.ckpt'

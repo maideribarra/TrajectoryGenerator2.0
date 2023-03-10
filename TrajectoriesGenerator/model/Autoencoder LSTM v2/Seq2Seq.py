@@ -45,7 +45,7 @@ class SeqtoSeq(pl.LightningModule):
         res=[hidden, cell]
         self.arrHiddenVec.append(res)
         #print('forward hidden shape',hidden.shape)
-        input = torch.zeros(batch_size, self.trg_len, self.n_features).to(self._device)
+        input = torch.zeros( self.trg_len, self.n_features).to(self._device)
         output, hidden, cell = self.decoder(input, hidden, cell) 
         #print('iteración ',self.trg_len)
         #for t in range(1, self.trg_len):
@@ -67,7 +67,7 @@ class SeqtoSeq(pl.LightningModule):
         #print('sale forward')
         #print('size input',input.size())
         #print('size outputs',outputs.size())
-        #print('size output',output.size())
+       # print('size output decoder',output.size())
         return output
 
 
@@ -76,9 +76,9 @@ class SeqtoSeq(pl.LightningModule):
         #input = batch.movedim(0,1)
         #print('input shape',input.shape)
         #print('calculo loss')
-        #print('batch size',batch.size())
+        #print('batch size',batch[0].size())
         #print('output size',output.size())
-        loss = self.criterion(output, batch)        
+        loss = self.criterion(output, batch[0])        
         self.log("train_loss", loss)
         return loss
 
@@ -89,7 +89,7 @@ class SeqtoSeq(pl.LightningModule):
         #print('calculo loss')
         #print('batch size',batch.size())
         #print('output size',output.size())
-        loss = self.criterion(output, batch)
+        loss = self.criterion(output, batch[0])
         return loss
 
     def test_step(self, batch, batch_idx):

@@ -10,18 +10,20 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from Seq2Seq import SeqtoSeq
 import sys
 sys.path.insert(0,"/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model")
+from dataModuleNormalize import DataModuleNormalize
 from dataModule import DataModule
 import pytorch_lightning as pl
 import os 
 import yaml
 from matplotlib import pyplot as plt 
+from sklearn.preprocessing import MinMaxScaler
 
 x0 = -1.5
 x1 = 1.5
 y0 = -1
 y1 = 2
 
-arrVariables = ['x','y','vx','vy','angle','vangle','l0','l1','action','n_episodio']
+arrVariables = ['x','y','vx','vy','angle','vangle','l0','l1','action1','action2','action3','action4']
 
 def plotOutput(predictions, ruta, x, y):
     out = predictions[0][0][1]
@@ -179,6 +181,8 @@ def showStatisticsOfDimensionBatchOne(predictions):
     print(dfres['l0'].where(dfres['y']<0.01).dropna().describe(include='all'))
 
 
+
+
     
 
 if __name__ == "__main__":
@@ -207,6 +211,7 @@ if __name__ == "__main__":
         TEST_DATASET = datos['TEST_DATASET']
         LOG_DIR = datos['LOG_DIR']
         CHK_PATH =datos['CHK_PATH']
+        LOSS_FUNCTION =  datos['LOSS_FUNCTION']
     print(LEARNING_RATE)
     device =torch.device('cuda')
     model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)       
@@ -214,11 +219,21 @@ if __name__ == "__main__":
     test = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/test40000.dat"
     val = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/val40000.dat"
     train = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/train40000.dat"
-    data = DataModule(workdir + TRAIN_DATASET,
-                     workdir + VAL_DATASET,
-                     workdir + TEST_DATASET,
-                     BATCH_SIZE,
-                     NUM_SEQ)
+    data = None
+    if len(sys.argv)==3:
+        arg2=sys.argv[2]
+        if arg2=='n':
+            data = DataModuleNormalize(workdir + TRAIN_DATASET,
+                            workdir + VAL_DATASET,
+                            workdir + TEST_DATASET,
+                            BATCH_SIZE,
+                            NUM_SEQ)
+    else:
+        data = DataModule(workdir + TRAIN_DATASET,
+                            workdir + VAL_DATASET,
+                            workdir + TEST_DATASET,
+                            BATCH_SIZE,
+                            NUM_SEQ)
     logdir = LOG_DIR
     logger = TensorBoardLogger(logdir, name="LSTM")
     num_gpus = 1 if torch.cuda.is_available() else 0
@@ -258,5 +273,20 @@ if __name__ == "__main__":
     plotOutputInputBatchOneWithTime(predictions, dirImg, 7)
     plotAllInputsBatchOneWithTime(predictions, dirImg,7)
     plotAllOutputsBatchOneWithTime(predictions, dirImg,7)
-    showStatisticsOfDimensionBatchOne(predictions)
+    #showStatisticsOfDimensionBatchOne(predictions)
+    plotOutputInputBatchOneWithTime(predictions, dirImg, 8)
+    plotAllInputsBatchOneWithTime(predictions, dirImg,8)
+    plotAllOutputsBatchOneWithTime(predictions, dirImg,8)
+
+    #plotOutputInputBatchOneWithTime(predictions, dirImg, 9)
+    #plotAllInputsBatchOneWithTime(predictions, dirImg,9)
+    #plotAllOutputsBatchOneWithTime(predictions, dirImg,9)
     
+    #plotOutputInputBatchOneWithTime(predictions, dirImg, 10)
+    #plotAllInputsBatchOneWithTime(predictions, dirImg,10)
+    #plotAllOutputsBatchOneWithTime(predictions, dirImg,10)
+
+    #plotOutputInputBatchOneWithTime(predictions, dirImg, 11)
+    #plotAllInputsBatchOneWithTime(predictions, dirImg,11)
+    #plotAllOutputsBatchOneWithTime(predictions, dirImg,11)
+

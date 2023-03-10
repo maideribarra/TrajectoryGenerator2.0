@@ -53,7 +53,7 @@ class DataModule(pl.LightningDataModule):
         ## Filtrar trayectorias de 1000 puntos, ya que solo son 5
         max_len = self.seq_len
         arr = [np.pad(x, ((0, max_len - len(x)),(0,0)), 'constant', constant_values=0) for x in sp if len(x)<max_len]
-        NParr=np.asarray(arr, dtype=float)[1:100, :, 1:]
+        NParr=np.asarray(arr, dtype=float)[:, :, 1:]
         print(NParr.shape)
         tensorArr=torch.Tensor(NParr)
         dataset = tensorArr

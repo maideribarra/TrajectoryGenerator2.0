@@ -20,9 +20,9 @@ class Encoder(nn.Module):
         #print(len(batch[0]))  
         batch_size=len(batch)
         encoder_outputs = torch.zeros(batch_size,self.trg_len, self.hid_dim, device=self.device)
-        encoder_hidden = torch.zeros(self.n_layers, batch_size, self.hid_dim, device=self.device)
-        encoder_cell = torch.zeros(self.n_layers,batch_size, self.hid_dim, device=self.device)
-        encoder_output, (encoder_hidden, encoder_cell) = self.rnn(batch, (encoder_hidden, encoder_cell))
+        #encoder_hidden = torch.zeros(self.n_layers, self.hid_dim, device=self.device)
+        #encoder_cell = torch.zeros(self.n_layers,batch_size, self.hid_dim, device=self.device)
+        encoder_output, (encoder_hidden, encoder_cell) = self.rnn(batch[0])
         #for ei in range(1,self.trg_len):
             #encoder_output, (encoder_hidden, encoder_cell) = self.rnn(batch[:,ei,:], (encoder_hidden, encoder_cell))
             #encoder_outputs[ei] = encoder_output[0, 0]   

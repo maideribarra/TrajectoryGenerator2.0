@@ -10,6 +10,7 @@ class Decoder(nn.Module):
         # loss function
         #self.criterion = torch.nn.CrossEntropyLoss()        
         self.dropout = torch.nn.Dropout(droput_prob)
+        self.device =torch.device('cuda')
         self.input_dim = input_dim
         self.hid_dim = hid_dim
         self.n_layers = n_layers     
@@ -27,15 +28,17 @@ class Decoder(nn.Module):
         
         #input = self.dropout(batch)
         # embedded = [1, batch_size, emb_dim]
-        #print('decoder batch dim',batch.size())
+       # print('decoder batch dim',batch.shape)
         #print('decoder hidden dim',hidden.size())
         #print('decoder cell dim',cell.size())
+        cell = torch.zeros(self.n_layers, self.hid_dim).to(self.device)
         output, (hidden, cell) = self.rnn(batch, (hidden, cell))
         # output = [seq_len, batch_size, hid_dim * n_dir]
         # hidden = [n_layers * n_dir, batch_size, hid_dim]
         # cell = [n_layers * n_dir, batch_size, hid_dim]
         
         # seq_len and n_dir will always be 1 in the decoder
-        prediction = self.fc(output.squeeze(0))
+        prediction = self.fc(output)
         # prediction = [batch_size, output_dim]
+       # print('output shape',output.shape)
         return prediction, hidden, cell

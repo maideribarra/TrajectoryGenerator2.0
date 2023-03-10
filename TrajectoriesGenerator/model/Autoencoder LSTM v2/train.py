@@ -10,16 +10,50 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from Seq2Seq import SeqtoSeq
 import sys
 sys.path.insert(0,"..")
+from dataModuleNormalize import DataModuleNormalize
 from dataModule import DataModule
 import pytorch_lightning as pl
 import os 
 import yaml
 
+def train(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION):
+    device =torch.device('cuda')
+    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
+    workdir = cwd+'/../../data/ficheros/'
+    data = DataModule(workdir + TRAIN_DATASET,
+                    workdir + VAL_DATASET,
+                    workdir + TEST_DATASET,
+                    BATCH_SIZE,
+                    NUM_SEQ)
+    logdir = cwd +'/../'+ LOG_DIR
+    print(LOG_DIR)
+    logger = TensorBoardLogger(LOG_DIR, name="LSTM")
+    num_gpus = 1 if torch.cuda.is_available() else 0
+    trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
+    trainer.fit(model, datamodule=data)
+    
+
+def trainWithNormalization(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION):
+    device =torch.device('cuda')
+    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,LOSS_FUNCTION)  
+    workdir = cwd+'/../../data/ficheros/'
+    data = DataModuleNormalize(workdir + TRAIN_DATASET,
+                    workdir + VAL_DATASET,
+                    workdir + TEST_DATASET,
+                    BATCH_SIZE,
+                    NUM_SEQ)
+    logdir = cwd +'/../'+ LOG_DIR
+    print(LOG_DIR)
+    logger = TensorBoardLogger(LOG_DIR, name="LSTM")
+    num_gpus = 1 if torch.cuda.is_available() else 0
+    trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
+    trainer.fit(model, datamodule=data)
+    
+
 if __name__ == "__main__":
-    # First initialize our model.
-    #Experimento para probar dataset de 40000, hidden layer=1000
     cwd = os.getcwd()
     experimento=sys.argv[1]
+    
     dir="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/"+experimento+'/'
     with open(dir+experimento+".yaml", "rb") as f:
         datos = yaml.load(f, yaml.Loader)
@@ -38,20 +72,16 @@ if __name__ == "__main__":
         VAL_DATASET = datos['VAL_DATASET']
         TEST_DATASET = datos['TEST_DATASET']
         LOG_DIR = datos['LOG_DIR']
+        LOSS_FUNCTION =  datos['LOSS_FUNCTION']
+    if len(sys.argv)==3:
+        arg2=sys.argv[2]
+        if arg2=='n':
+            print('Dataset normalizado')
+            trainWithNormalization(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
+    else:
+        train(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
 
 
-    device =torch.device('cuda')
-    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
-    workdir = cwd+'/../../data/ficheros/'
-    data = DataModule(workdir + TRAIN_DATASET,
-                    workdir + VAL_DATASET,
-                    workdir + TEST_DATASET,
-                    BATCH_SIZE,
-                    NUM_SEQ)
-    logdir = cwd +'/../'+ LOG_DIR
-    logger = TensorBoardLogger(logdir, name="LSTM")
-    num_gpus = 1 if torch.cuda.is_available() else 0
-    trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
-    trainer.fit(model, datamodule=data)
+
     
     
