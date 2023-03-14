@@ -1,0 +1,16 @@
+BATCH_SIZE: 16
+DEC_DROPOUT: 0.3
+DROPOUT_PROB: 0.3
+ENC_DROPOUT: 0.3
+HID_DIM: 1000
+INPUT_DIM: 9
+LEARNING_RATE: 2.0e-05
+NUM_EPOCHS: 6
+NUM_SEQ: 260
+N_LAYERS: 2
+OUTPUT_DIM: 9
+TRAIN_DATASET: 'train40000.dat'
+TEST_DATASET: 'test40000.dat'
+VAL_DATASET: 'val40000.dat'
+LOG_DIR: 'TrajectoryGenerator_logs_exp3/'
+CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp3/LSTM/version_1/checkpoints/epoch=2-step=5892.ckpt'

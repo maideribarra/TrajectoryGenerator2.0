@@ -1,0 +1,20 @@
+#Fecha: 9/03/2023
+#Resumen: Se modifica el batch a 1 y las layers a 1 y no se consideran las acciones, sin normalizar.
+#Resultado: Overfitting
+BATCH_SIZE: 1
+DEC_DROPOUT: 0.3
+DROPOUT_PROB: 0.3
+ENC_DROPOUT: 0.3
+HID_DIM: 1000
+INPUT_DIM: 8
+LEARNING_RATE: 2.0e-05
+NUM_EPOCHS: 1
+NUM_SEQ: 260
+N_LAYERS: 1
+OUTPUT_DIM: 8
+TRAIN_DATASET: 'train40000.dat'
+TEST_DATASET: 'test40000.dat'
+VAL_DATASET: 'val40000.dat'
+LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp15/'
+LOSS_FUNCTION : 'MSE'
+CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp15/LSTM/version_1/checkpoints/epoch=0-step=31412.ckpt'
