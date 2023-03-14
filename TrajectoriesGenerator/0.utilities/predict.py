@@ -7,11 +7,11 @@ import torch.nn as nn
 import torch.optim as optim
 from torchtext.datasets import Multi30k
 from pytorch_lightning.loggers import TensorBoardLogger
-from Seq2Seq import SeqtoSeq
+from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
 import sys
 sys.path.insert(0,"/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model")
-from dataModuleNormalize import DataModuleNormalize
-from dataModule import DataModule
+from data.dataModuleNormalize import DataModuleNormalize
+from data.dataModule import DataModule
 import pytorch_lightning as pl
 import os 
 import yaml
