@@ -65,6 +65,48 @@ def trainVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPO
     trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
     trainer.fit(model, datamodule=data)
 
+def trainfromPretrainnedVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION,CHK_PATH):
+    device =torch.device('cuda')
+    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
+    workdir = cwd+'/../data/ficheros/'
+    data = DataModule(workdir + TRAIN_DATASET,
+                    workdir + VAL_DATASET,
+                    workdir + TEST_DATASET,
+                    BATCH_SIZE,
+                    NUM_SEQ)
+    print(LOG_DIR)
+    model2 = model.load_from_checkpoint(CHK_PATH,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE)
+    pretrained_dict = model2.encoder.rnn.state_dict()
+    model3 = VAESeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
+    model3.encoder.rnn.load_state_dict(pretrained_dict)
+    logger = TensorBoardLogger(LOG_DIR, name="LSTM")
+    num_gpus = 1 if torch.cuda.is_available() else 0
+    trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
+    trainer.fit(model3, datamodule=data)
+
+def trainfromPretrainnedVAE2(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION,CHK_PATH):
+    device =torch.device('cuda')
+    model = VAESeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)   
+    workdir = cwd+'/../data/ficheros/'
+    data = DataModule(workdir + TRAIN_DATASET,
+                    workdir + VAL_DATASET,
+                    workdir + TEST_DATASET,
+                    BATCH_SIZE,
+                    NUM_SEQ)
+    print(LOG_DIR)
+    model2 = model.load_from_checkpoint(CHK_PATH,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE)
+    workdir = cwd+'/../data/ficheros/'
+    data = DataModule(workdir + TRAIN_DATASET,
+                    workdir + VAL_DATASET,
+                    workdir + TEST_DATASET,
+                    BATCH_SIZE,
+                    NUM_SEQ)
+    print(LOG_DIR)
+    logger = TensorBoardLogger(LOG_DIR, name="LSTM")
+    num_gpus = 1 if torch.cuda.is_available() else 0
+    trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
+    trainer.fit(model2, datamodule=data)
+
 if __name__ == "__main__":
     cwd = os.getcwd()
     experimento=sys.argv[1]
@@ -89,12 +131,17 @@ if __name__ == "__main__":
         LOG_DIR = datos['LOG_DIR']
         LOSS_FUNCTION =  datos['LOSS_FUNCTION']
         MODEL = datos['MODEL']
+        CHK_PATH = datos['CHK_PATH']
     print(MODEL)
     if len(sys.argv)==3:
         arg2=sys.argv[2]
         if arg2=='n':
             print('Dataset normalizado')
             trainWithNormalization(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
+        if arg2=='p':
+            print('train from pretrainned')
+            trainfromPretrainnedVAE2(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION,CHK_PATH)
+
     if MODEL=='VAE':
         print('trainVAE')
         trainVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)

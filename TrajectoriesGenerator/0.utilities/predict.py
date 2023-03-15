@@ -7,9 +7,9 @@ import torch.nn as nn
 import torch.optim as optim
 from torchtext.datasets import Multi30k
 from pytorch_lightning.loggers import TensorBoardLogger
-from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
 import sys
-sys.path.insert(0,"/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model")
+sys.path.insert(0,"..")
+from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
 from data.dataModuleNormalize import DataModuleNormalize
 from data.dataModule import DataModule
 import pytorch_lightning as pl
@@ -17,6 +17,7 @@ import os
 import yaml
 from matplotlib import pyplot as plt 
 from sklearn.preprocessing import MinMaxScaler
+from model.v3VAELSTM.VAESeq2Seq import VAESeqtoSeq
 
 x0 = -1.5
 x1 = 1.5
@@ -190,9 +191,8 @@ if __name__ == "__main__":
     #Experimento para probar dataset de 40000, hidden layer=1000
     cwd = os.getcwd()
     experimento=sys.argv[1]
-    dir='/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/'+experimento+'/'+experimento+'.yaml'
-    dirImg='/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/'+experimento+'/'+experimento
-
+    dir='/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/experiments/'+experimento+'/'+experimento+'.yaml'
+    dirImg='/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/experiments/'+experimento+'/'
     with open(dir, "rb") as f:
         datos = yaml.load(f, yaml.Loader)
         NUM_SEQ = datos['NUM_SEQ']
@@ -212,10 +212,11 @@ if __name__ == "__main__":
         LOG_DIR = datos['LOG_DIR']
         CHK_PATH =datos['CHK_PATH']
         LOSS_FUNCTION =  datos['LOSS_FUNCTION']
+        MODEL = datos['MODEL']
     print(LEARNING_RATE)
     device =torch.device('cuda')
-    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)       
-    workdir = cwd+'/../../data/ficheros/'
+    
+    workdir = cwd+'/../data/ficheros/'
     test = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/test40000.dat"
     val = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/val40000.dat"
     train = "/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/train40000.dat"
@@ -228,12 +229,19 @@ if __name__ == "__main__":
                             workdir + TEST_DATASET,
                             BATCH_SIZE,
                             NUM_SEQ)
+    
     else:
         data = DataModule(workdir + TRAIN_DATASET,
                             workdir + VAL_DATASET,
                             workdir + TEST_DATASET,
                             BATCH_SIZE,
                             NUM_SEQ)
+    if MODEL=='VAE':
+        print('showVAE')
+        model = VAESeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)       
+    if MODEL =='AE':
+        model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE) 
+
     logdir = LOG_DIR
     logger = TensorBoardLogger(logdir, name="LSTM")
     num_gpus = 1 if torch.cuda.is_available() else 0
