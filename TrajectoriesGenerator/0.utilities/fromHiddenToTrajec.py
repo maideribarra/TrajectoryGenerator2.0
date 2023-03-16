@@ -18,7 +18,7 @@ from matplotlib import pyplot as plt
 import pickle
 import io
 import json
-from decodeHiddenSate import decodeHiddenState
+from v2AutoencoderLSTMv2.decodeHiddenSate import decodeHiddenState
 
 x0 = -1.5
 x1 = 1.5

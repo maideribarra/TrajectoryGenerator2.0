@@ -9,6 +9,7 @@ from torchtext.datasets import Multi30k
 from pytorch_lightning.loggers import TensorBoardLogger
 import sys
 sys.path.insert(0,"..")
+sys.path.insert(0,"/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator")
 from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
 from model.v3VAELSTM.VAESeq2Seq import VAESeqtoSeq
 from data.dataModuleNormalize import DataModuleNormalize
@@ -38,6 +39,7 @@ def trainWithNormalization(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DRO
     device =torch.device('cuda')
     model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
     workdir = cwd+'/../data/ficheros/'
+    workdir ="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/"
     data = DataModuleNormalize(workdir + TRAIN_DATASET,
                     workdir + VAL_DATASET,
                     workdir + TEST_DATASET,
@@ -69,6 +71,7 @@ def trainfromPretrainnedVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DR
     device =torch.device('cuda')
     model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)  
     workdir = cwd+'/../data/ficheros/'
+    workdir ="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/data/ficheros/"
     data = DataModule(workdir + TRAIN_DATASET,
                     workdir + VAL_DATASET,
                     workdir + TEST_DATASET,
@@ -142,12 +145,13 @@ if __name__ == "__main__":
             print('train from pretrainned')
             trainfromPretrainnedVAE2(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION,CHK_PATH)
 
-    if MODEL=='VAE':
-        print('trainVAE')
-        trainVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
-
     else:
-        train(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
+        if MODEL=='VAE':
+            print('trainVAE')
+            trainVAE(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
+
+        else:
+            train(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,ENC_DROPOUT,DEC_DROPOUT,DROPOUT_PROB,LEARNING_RATE,BATCH_SIZE,NUM_EPOCHS,TRAIN_DATASET,VAL_DATASET,TEST_DATASET,LOG_DIR,LOSS_FUNCTION)
 
 
 
