@@ -36,11 +36,11 @@ class SeqtoSeq(pl.LightningModule):
         batch_size = len(batch)
         outputs = torch.zeros(self.trg_len,batch_size,  self.n_features).to(self.device)        
         hidden, cell = self.encoder(batch)
+        print(batch[0][:,8])
         res=[hidden, cell]
         self.arrHiddenVec.append(res)
-        input = torch.zeros( self.trg_len, self.n_features).to(self._device)
-        output, hidden, cell = self.decoder(input, hidden, cell) 
-        return output
+         
+        return res
 
 
     def training_step(self, batch, batch_idx):
@@ -50,9 +50,7 @@ class SeqtoSeq(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        output = self.forward(batch)
-        loss = torch.sqrt(self.criterion(output, batch[0]))
-        return loss
+        return NotImplemented
 
     def test_step(self, batch, batch_idx):
         input = batch
@@ -63,20 +61,14 @@ class SeqtoSeq(pl.LightningModule):
     
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
         resultados = []
-        input = batch.movedim(0,1)
         output = self.forward(batch)
-        resultados.append([input,output])
+        resultados.append([batch[0][:,8],output])
         return resultados
 
 
     def estados_ocultos(self):
         return self.arrHiddenVec
     
-    def set_estados_ocultos(self,torchHidden):
-        self.arrHiddenVec=torchHidden
-
-    def set_celdas_ocultas(self,torchCell):
-        self.arrCellVec=torchCell
 
     def transform_Traj(self):
         return NotImplemented

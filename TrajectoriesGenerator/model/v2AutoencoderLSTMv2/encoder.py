@@ -1,6 +1,7 @@
 
 import torch
 import torch.nn as nn
+#class Encoder(nn.Module):
 class Encoder(nn.Module):
 
     def __init__(self, dropout_prob, input_dim,hid_dim,n_layers,num_seq,device):
@@ -20,3 +21,12 @@ class Encoder(nn.Module):
         encoder_outputs = torch.zeros(batch_size,self.trg_len, self.hid_dim, device=self.device)
         encoder_output, (encoder_hidden, encoder_cell) = self.rnn(batch[0])
         return encoder_hidden, encoder_cell
+    
+    
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        resultados = []
+        output = self.forward(batch)
+        print(batch[0][:,8])
+        resultados.append([batch[0][:,8],output])
+        return resultados
+
