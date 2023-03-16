@@ -12,19 +12,20 @@ class VAEencoder(nn.Module):
         self.input_dim = input_dim
         self.hid_dim = hid_dim
         self.n_layers = n_layers       
-        self.rnn1 = nn.LSTM(input_size=self.input_dim,hidden_size=self.hid_dim, num_layers=self.n_layers, batch_first=True )
-        self.rnn2 = nn.LSTM(input_size=self.input_dim,hidden_size=self.hid_dim, num_layers=self.n_layers, batch_first=True )        
+        self.rnn = nn.LSTM(input_size=self.input_dim,hidden_size=self.hid_dim, num_layers=self.n_layers, batch_first=True )
+        self.fc21 = nn.Linear(self.hid_dim, self.hid_dim)
+        self.fc22 = nn.Linear(self.hid_dim, self.hid_dim)
         self.trg_len =  num_seq
         self.device=torch.device('cuda')
         self.kl=0
         self.N = torch.distributions.Normal(torch.tensor(0.0), torch.tensor(1.0))
 
     def forward(self, batch):  
-        encoder_output1, (encoder_hidden1, encoder_cell1) = self.rnn1(batch[0])
-        encoder_output2, (encoder_hidden2, encoder_cell2) = self.rnn2(batch[0])
-        mu_hidden =  encoder_hidden1.to(self.device)
+        encoder_output1, (encoder_hidden1, encoder_cell1) = self.rnn(batch[0])
+        mu_hidden = self.fc21(encoder_hidden1)
         #print('mu_hidden.shape',mu_hidden.shape)
-        sigma_hidden = torch.exp(encoder_hidden2).to(self.device)
+        sigma =self.fc22(encoder_hidden1)
+        sigma_hidden = torch.exp(sigma).to(self.device)
         #print('sigma_hidden',sigma_hidden.shape)
         normalD=self.N.sample([self.hid_dim,self.hid_dim]).to(self.device)
         #print('normalD shape', normalD.shape)
