@@ -34,6 +34,8 @@ def oneHotEncodingActions(fileO,fileD):
     print('arrayResult shape', arrResult.shape)
     print('arrResult index 0',arrResult[0])
     np.savetxt(fileD,arrResult, delimiter=',')
+
+
     
 
 

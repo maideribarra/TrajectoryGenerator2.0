@@ -1,6 +1,6 @@
 #Fecha: 13/03/2023
-#Resumen: Se modifica el batch a 1 y las layers a 1, sin dropout, con loss function RSME
-#Resultado: Muy bueno
+#Resumen: Devolver hidden states y actions
+#Resultado: 
 BATCH_SIZE: 1
 DEC_DROPOUT: 0.3
 DROPOUT_PROB: 0.3
@@ -15,6 +15,6 @@ OUTPUT_DIM: 9
 TRAIN_DATASET: 'train40000.dat'
 TEST_DATASET: 'test40000.dat'
 VAL_DATASET: 'val40000.dat'
-LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp19/'
+LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/TrajectoryGenerator_logs_exp23/'
 LOSS_FUNCTION: 'RMSE'
 CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/logs/TrajectoryGenerator_logs/TrajectoryGenerator_logs_exp19/LSTM/version_0/checkpoints/epoch=1-step=62826.ckpt'

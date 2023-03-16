@@ -1,5 +1,5 @@
 #Fecha: 13/03/2023
-#Resumen: 
+#Resumen: se utilizan pesos de decoder? exp19 (Se modifica el batch a 1 y las layers a 1, sin dropout, con loss function RSME) + VAE pasando la distribuciçon del hidden state. 
 #Resultado: 
 BATCH_SIZE: 1
 DEC_DROPOUT: 0.3
@@ -8,7 +8,7 @@ ENC_DROPOUT: 0.3
 HID_DIM: 500
 INPUT_DIM: 9
 LEARNING_RATE: 2.0e-05
-NUM_EPOCHS: 2
+NUM_EPOCHS: 3
 NUM_SEQ: 260
 N_LAYERS: 1
 OUTPUT_DIM: 9
@@ -18,4 +18,4 @@ VAL_DATASET: 'val40000.dat'
 LOG_DIR: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/logs/TrajectoryGenerator_logs_exp20/'
 MODEL: 'VAE'
 LOSS_FUNCTION: 'RMSE'
-CHK_PATH: 
+CHK_PATH: '/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/logs/TrajectoryGenerator_logs_exp20/LSTM/version_27/checkpoints/epoch=1-step=62826.ckpt'
