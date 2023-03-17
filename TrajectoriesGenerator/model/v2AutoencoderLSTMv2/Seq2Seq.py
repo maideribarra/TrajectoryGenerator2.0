@@ -26,22 +26,23 @@ class SeqtoSeq(pl.LightningModule):
         self.criterion = torch.nn.MSELoss()
         self.arrHiddenVec = []
         self.arrCellVec = []
+        self.mode =0
         
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(),
                           lr=self.learning_rate)
         return optimizer
 
-    def forward(self, batch):
+    def forward(self, batch):  
         batch_size = len(batch)
         outputs = torch.zeros(self.trg_len,batch_size,  self.n_features).to(self.device)        
         hidden, cell = self.encoder(batch)
-        res=[hidden, cell]
-        self.arrHiddenVec.append(res)
+        res=[hidden, cell]        
         input = torch.zeros( self.trg_len, self.n_features).to(self._device)
         output, hidden, cell = self.decoder(input, hidden, cell) 
+        if self.mode!= 0:
+            self.arrHiddenVec.append(res)
         return output
-
 
     def training_step(self, batch, batch_idx):
         output = self.forward(batch)
@@ -68,6 +69,8 @@ class SeqtoSeq(pl.LightningModule):
         resultados.append([input,output])
         return resultados
 
+    def setMode(self,mode):
+        self.mode=mode
 
     def estados_ocultos(self):
         return self.arrHiddenVec
@@ -79,4 +82,10 @@ class SeqtoSeq(pl.LightningModule):
         self.arrCellVec=torchCell
 
     def transform_Traj(self):
-        return NotImplemented
+        self.mode = 1
+        resultados = []
+        for i in range(len(self.arrHiddenVec)):
+            input = torch.zeros( self.trg_len, self.n_features).to(self._device)
+            output, hidden, cell = self.decoder.forward(input,self.arrHiddenVec[i],self.arrCellVec[i])
+            resultados.append(output)
+        return resultados

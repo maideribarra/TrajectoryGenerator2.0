@@ -7,10 +7,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torchtext.datasets import Multi30k
 from pytorch_lightning.loggers import TensorBoardLogger
-from Seq2Seq import SeqtoSeq
 import sys
 sys.path.insert(0,"..")
-from dataModule import DataModule
+from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
+from data.dataModule import DataModule
 import pytorch_lightning as pl
 import os 
 import yaml
@@ -22,8 +22,8 @@ if __name__ == "__main__":
     # First initialize our model.
     #Experimento para probar dataset de 40000, hidden layer=1000
     cwd = os.getcwd()
-    dir="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/model/Autoencoder LSTM v2/experimentos/exp9/"
-    with open(dir+"exp9.yaml", "rb") as f:
+    dir="/home/ubuntu/ws_acroba/src/shared/egia/TrajectoriesGenerator/experiments/exp19/"
+    with open(dir+"exp19.yaml", "rb") as f:
         datos = yaml.load(f, yaml.Loader)
         NUM_SEQ = datos['NUM_SEQ']
         INPUT_DIM = datos['INPUT_DIM']
@@ -44,8 +44,8 @@ if __name__ == "__main__":
         LOSS_FUNCTION =datos['LOSS_FUNCTION']
     print(LEARNING_RATE)
     device =torch.device('cuda')
-    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,LOSS_FUNCTION)       
-    workdir = cwd+'/../../data/ficheros/'
+    model = SeqtoSeq(NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE)       
+    workdir = cwd+'/../data/ficheros/'
     data = DataModule(workdir + TRAIN_DATASET,
                     workdir + VAL_DATASET,
                     workdir + TEST_DATASET,
@@ -55,9 +55,10 @@ if __name__ == "__main__":
     logger = TensorBoardLogger(logdir, name="LSTM")
     num_gpus = 1 if torch.cuda.is_available() else 0
     chk_path = CHK_PATH
-    model2 = model.load_from_checkpoint(chk_path,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE, lossFunction=LOSS_FUNCTION)
+    model2 = model.load_from_checkpoint(chk_path,NUM_SEQ=NUM_SEQ,INPUT_DIM=INPUT_DIM,OUTPUT_DIM=OUTPUT_DIM,HID_DIM=HID_DIM,N_LAYERS=N_LAYERS,DROPOUT_PROB=DROPOUT_PROB,LEARNING_RATE=LEARNING_RATE)
     checkpoint = torch.load(chk_path, map_location=lambda storage, loc: storage)
     print(checkpoint)
+    model2.mode=1
     trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
     trainer.test(model2, datamodule=data)
     HiddenCellVect = model2.estados_ocultos()
@@ -72,11 +73,11 @@ if __name__ == "__main__":
     print('HiddenVec size 0',len(hiddVect2))
     print('HiddenVec size 1',len(hiddVect2[0]))
     print('HiddenVec size 2',len(hiddVect2[0][0]))
-    print('HiddenVec size 3',len(hiddVect2[0][0][0]))
+    #print('HiddenVec size 3',len(hiddVect2[0][0][0]))
     print(type(hiddVect2[0]))
     print('cuidado preparado para batch 1')
-    hiddVect = [np.mean(x, axis=1, dtype=torch.dtype)[0] for x in hiddVect2]
-    hiddCell = [np.mean(x, axis=1, dtype=torch.dtype)[0] for x in hiddCell2]
+    hiddVect = [x[:,0] for x in hiddVect2]
+    hiddCell = [x[:,0] for x in hiddCell2]
     #print(hiddVect.shape)    
     print('hiddVect size 0',len(hiddVect))
     print('hiddVect size 1',len(hiddVect[0]))
@@ -102,6 +103,6 @@ if __name__ == "__main__":
     #serialized = pickle.dump(hiddCell, file)
     #with open(fileName, "wb") as f:
      #   f.write(file.getbuffer())
-    np.savetxt('hiddenVecExp9.txt', nphiddVect, delimiter=',') 
-    np.savetxt('cellVecExp9.txt', nphiddCell, delimiter=',') 
+    np.savetxt('hiddenVecExp19.txt', nphiddVect, delimiter=',') 
+    np.savetxt('cellVecExp19.txt', nphiddCell, delimiter=',') 
     

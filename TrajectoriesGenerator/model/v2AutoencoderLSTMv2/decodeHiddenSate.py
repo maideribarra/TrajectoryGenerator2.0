@@ -6,8 +6,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import pytorch_lightning as pl
-from decoder import Decoder
-from encoder import Encoder
+import sys
+sys.path.insert(0,"..")
+from model.v2AutoencoderLSTMv2.Seq2Seq import SeqtoSeq
+from model.v2AutoencoderLSTMv2.decoder import Decoder
+from model.v2AutoencoderLSTMv2.encoder import Encoder
 import yaml
 
 
