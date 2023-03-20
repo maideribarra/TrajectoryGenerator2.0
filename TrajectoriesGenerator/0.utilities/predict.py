@@ -18,6 +18,8 @@ import yaml
 from matplotlib import pyplot as plt 
 from sklearn.preprocessing import MinMaxScaler
 from model.v3VAELSTM.VAESeq2Seq import VAESeqtoSeq
+import io
+import pickle
 
 x0 = -1.5
 x1 = 1.5
@@ -250,6 +252,11 @@ if __name__ == "__main__":
     print(model2)
     trainer = pl.Trainer(max_epochs = NUM_EPOCHS, logger=logger, gpus=num_gpus)
     predictions = trainer.predict(model2, datamodule=data)
+    file = io.BytesIO()
+    fileName = dir+'predictions'+experimento
+    serialized = pickle.dump(predictions, file)
+    with open(fileName, "wb") as f:
+        f.write(file.getbuffer())
     #print(predictions)
     #npres=np.asarray(predictions)
     npres=predictions[0][0]

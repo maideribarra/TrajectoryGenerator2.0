@@ -145,10 +145,24 @@ def fromHiddenToTrajectRandom(chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LA
     print('len predictions 2',len(predictions[0][0]))
     return predictions
 
-def bucleRandomTraj(numTraj,chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE, rutaHidden, rutaCell):
+def bucleRandomTraj(numTraj,chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE, rutaHidden, rutaCell, dir, fileSer):
+    predictions=fromHiddenToTrajectRandom(chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,rutaHidden,rutaCell)
     for i in range(0,numTraj):
-        predictions=fromHiddenToTrajectRandom(chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,rutaHidden,rutaCell)
-        plots(predictions, dir,'random/',i)
+        plots(predictions, dir,'randomHiddenVecResImages/',i)
+    saveTraj2SerializableFile(predictions, dir, fileSer)
+
+def bucleTraj(numTraj,chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE, rutaHidden, rutaCell, dir, fileSer):
+    predictions=fromHiddenToTraject(chk_path,NUM_SEQ,INPUT_DIM,OUTPUT_DIM,HID_DIM,N_LAYERS,DROPOUT_PROB,LEARNING_RATE,rutaHidden,rutaCell)
+    for i in range(0,numTraj):
+        plots(predictions, dir,'hiddenVecFiles/Images/',i)
+    saveTraj2SerializableFile(predictions, dir, fileSer)
+
+def saveTraj2SerializableFile(arrPredictions, dir, file):
+    file = io.BytesIO()
+    fileName = dir+file
+    serialized = pickle.dump(arrPredictions, file)
+    with open(fileName, "wb") as f:
+        f.write(file.getbuffer())
 
 
 

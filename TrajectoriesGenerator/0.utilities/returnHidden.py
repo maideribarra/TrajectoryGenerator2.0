@@ -104,5 +104,6 @@ if __name__ == "__main__":
     #with open(fileName, "wb") as f:
      #   f.write(file.getbuffer())
     np.savetxt('hiddenVecExp19.txt', nphiddVect, delimiter=',') 
+
     np.savetxt('cellVecExp19.txt', nphiddCell, delimiter=',') 
     
